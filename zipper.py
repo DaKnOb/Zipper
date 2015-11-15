@@ -14,6 +14,25 @@ UnitSize = "M"
 
 #####
 
+def totalBytes(size, unitSize):
+	'''
+	Converts size with unitSize such K, MB, M, etc
+	into respective total bytes
+	'''
+	multipliers = {
+		'b':512,
+		'kB': 1000,
+		'K': 1024,
+		'MB': 1000*1000,
+		'M': 1024*1024,
+		'GB': 1000*1000*1000,
+		'G': 1024*1024*1024,
+	}
+
+	return size * multipliers.get(unitSize, 1)
+
+
+
 def writeCSV(s,f):
 	sys.stdout.write(s)
 	fi = open(f, "a+")
@@ -29,7 +48,7 @@ for t in range(0, (EndGB - StartGB + 1)):
 for size in range(StartGB, EndGB+1):
 	for times in range(StartZIP, EndZIP+1):
 		FileName = str(size) + UnitSize + "." + str(times) + "T.gz"
-		command = "head -c " + str(size) + UnitSize + " " + SourceFile
+		command = "head -c " + str(totalBytes(size, UnitSize)) + " " + SourceFile
 		command = command + (ZipWith * times)
 		command = command + ">" + FileName
 		print(command)
