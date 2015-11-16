@@ -40,7 +40,7 @@ parser.add_argument(
 	default="/dev/zero")
 parser.add_argument(
 	"--unitsize",
-	help="""The units in which StartGB and EndGB are measured.
+	help="""The units in which Start Unit and End Unit are measured.
 	Possible values are b(512), kB(1000), K(1024), MB(1000*1000), M(1024*1024),
 	GB(1000*1000*1000), and G(1024*1024*1024)
 	""",
