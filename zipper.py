@@ -1,4 +1,5 @@
 #!/usr/bin/python
+from __future__ import division
 
 import os,time,sys
 import argparse
@@ -45,6 +46,12 @@ parser.add_argument(
 	GB(1000*1000*1000), and G(1024*1024*1024)
 	""",
 	default='B')
+parser.add_argument(
+	"--timestorun",
+	help="""Define how many times each command will run. When set to higher 
+	values than 1, the time measured will be the average of all runs.""",
+	type=int,
+	default=1)
 
 args = parser.parse_args()
 
@@ -57,6 +64,7 @@ ZipWith = '|' + args.zipwith
 SourceFile = args.sourcefile
 
 UnitSize = args.unitsize
+TimesToRun = args.timestorun or 1 # To prevent running zero times
 
 ####
 
@@ -85,6 +93,12 @@ def writeCSV(s,f):
 	fi.write(s)
 	fi.close()
 
+def silentRemove(filename):
+	try:
+		os.remove(filename)
+	except OSError:
+		pass
+
 TimeTable = []
 StorageTable = []
 for t in range(0, (EndUnit - StartUnit + 1)):
@@ -98,12 +112,27 @@ for size in range(StartUnit, EndUnit+1):
 		command = command + (ZipWith * times)
 		command = command + ">" + FileName
 		print(command)
-		init = time.time()
-		os.system(command)
-		end = time.time()
-		print(" Took: " + str(end - init) + " seconds")
+
+		# Run command TimesToRun times and calculate average
+		TotalTime = 0
+		for i in range(TimesToRun):
+
+			# Delete file created by previous run of same command
+			# Run this first because we may want to read size of the file
+			# created after execution ends
+			silentRemove(FileName)
+
+			init = time.time()
+			os.system(command)
+			end = time.time()
+
+			TotalTime += end - init
+
+		AverageTime = TotalTime / TimesToRun
+		print(" Ran: " + str(TimesToRun) + " times")
+		print(" Took: " + str(AverageTime) + " seconds")
 		print(" Size: " + str(os.path.getsize(FileName)) + " bytes")
-		TimeTable[size - StartUnit].append(end - init)
+		TimeTable[size - StartUnit].append(AverageTime)
 		StorageTable[size - StartUnit].append(os.path.getsize(FileName))
 
 os.system("rm -vfR *.gz > /dev/null 2> /dev/null")
