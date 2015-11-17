@@ -146,7 +146,7 @@ for size in range(StartZIP, EndZIP + 1):
 writeCSV("\n", "size.csv")
 InitialLayer = StartUnit
 for size in StorageTable:
-	writeCSV(str(InitialLayer) + " " + UnitSize + "B", "size.csv")
+	writeCSV(str(InitialLayer) + " " + UnitSize , "size.csv")
 	InitialLayer = InitialLayer + 1
 	for layer in size:
 		writeCSV("," + str(layer), "size.csv")
@@ -162,7 +162,7 @@ for size in range(StartZIP, EndZIP + 1):
 writeCSV("\n", "time.csv")
 InitialLayer = StartUnit
 for size in TimeTable:
-	writeCSV(str(InitialLayer) + " " + UnitSize + "B", "time.csv")
+	writeCSV(str(InitialLayer) + " " + UnitSize , "time.csv")
 	InitialLayer = InitialLayer + 1
 	for layer in size:
 		writeCSV("," + str(layer), "time.csv")
